@@ -20,7 +20,7 @@ def gradient_descent_fixed(
         max_iter: int = 1000,
         tol: float = 1e-6,
         alpha: float = 1e-5
-) -> List[float]:
+) -> int:
     """
     Performs gradient descent optimization to minimize `f` starting from `x`.
 
@@ -34,20 +34,20 @@ def gradient_descent_fixed(
         tol (float, optional):
             The tolerance for convergence. If the norm of the gradient is less than this value, the function will return.
             Default is 1e-6.
-        alpha (float, optional):a
+        alpha (float, optional):
             The learning rate or step size for the gradient descent updates. Default is 1e-5.
 
     Returns:
-        List[float]:
-            The point which is a local minimum of the function `f`.
+        int:
+            The number of iterations performed.
     """
-    for _ in range(max_iter):
+    for iteration in range(max_iter):
         grad = gradient(f, x)
         if all(abs(gr) < tol for gr in grad):
             break
         for i in range(len(x)):
             x[i] -= alpha * grad[i]
-    return x
+    return iteration
 
 
 def spi(
@@ -102,17 +102,17 @@ def gradient_descent_spi(
         f: Callable[[List[float]], float],
         x: List[float],
         params: Parameters
-) -> List[float]:
+) -> int:
     """
-    Perform gradient descent optimization with variable step using SPI
+    Perform gradient descent optimization with variable step using SPI.
 
     Args:
-        f (Callable[[float], float]): The function to minimize.
-        x (float): The initial point.
+        f (Callable[[float]], float): The function to minimize.
+        x (List[float]): The initial point.
         params (Parameters): The parameters for gradient descent with SPI.
 
     Returns:
-        float: The optimized value of x.
+        int: The number of iterations performed.
     """
     for k in range(params.max_iter):
         v = gradient(f, x)
@@ -122,12 +122,12 @@ def gradient_descent_spi(
         def g_alpha(alpha):
             return g(alpha, f, x, v)
 
-        # Call MIPS to find the optimal alpha
+        # Call SPI to find the optimal alpha
         spi(params.r, params.delta, g_alpha, x_min, params.mips_tol, params.mips_tol_den, params.max_iter)
         alfa = x_min[0]
         for i in range(len(x)):
             x[i] = x[i] - v[i] * alfa
         if (sum([i ** 2 for i in v])) ** (1 / 2) < params.tol:
-            return x
+            return k
 
-    return x
+    return params.max_iter
