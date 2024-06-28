@@ -14,13 +14,12 @@ def gradient(f: Callable[[List[float]], float], x: List[float], h=1e-6) -> List[
     return grad
 
 
-
 def gradient_descent_fixed(
         f: Callable[[List[float]], float],
         x: List[float],
         max_iter: int = 1000,
         tol: float = 1e-6,
-        alfa: float = 1e-5
+        alpha: float = 1e-5
 ) -> List[float]:
     """
     Performs gradient descent optimization to minimize `f` starting from `x`.
@@ -35,7 +34,7 @@ def gradient_descent_fixed(
         tol (float, optional):
             The tolerance for convergence. If the norm of the gradient is less than this value, the function will return.
             Default is 1e-6.
-        alfa (float, optional):a
+        alpha (float, optional):a
             The learning rate or step size for the gradient descent updates. Default is 1e-5.
 
     Returns:
@@ -47,7 +46,7 @@ def gradient_descent_fixed(
         if all(abs(gr) < tol for gr in grad):
             break
         for i in range(len(x)):
-            x[i] -= alfa * grad[i]
+            x[i] -= alpha * grad[i]
     return x
 
 
