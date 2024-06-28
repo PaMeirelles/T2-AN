@@ -1,14 +1,18 @@
 import grad
 from parameters import Parameters
 
+
 def f1(x):
-    return (x[0] ** 4) + (x[1] ** 4) + (2 * x[0] ** 2 * x[1] ** 2) + (6 * x[0]*x[1]) - (4 * x[0]) - (4 * x[1]) + 1
+    return (x[0] ** 4) + (x[1] ** 4) + (2 * x[0] ** 2 * x[1] ** 2) + (6 * x[0] * x[1]) - (4 * x[0]) - (4 * x[1]) + 1
+
 
 def f_r_2(x):
-    return 100*((x[1]-x[0] ** 2)**2) + (x[0] - 1)**2
+    return 100 * ((x[1] - x[0] ** 2) ** 2) + (x[0] - 1) ** 2
+
 
 def f_r_3(x):
-    return 100 * (x[1] - x[0]**2)**2 + (x[0] - 1)**2 + 100 * (x[2] - x[1]**2)**2 + (x[1] - 1)**2
+    return 100 * (x[1] - x[0] ** 2) ** 2 + (x[0] - 1) ** 2 + 100 * (x[2] - x[1] ** 2) ** 2 + (x[1] - 1) ** 2
+
 
 inputs_2d = [[0, 0], [2, 2], [3, 13], [1, 0], [20, -5]]
 functions_2d = [("f1", f1), ("2D Rosenbrock function", f_r_2)]
@@ -31,10 +35,12 @@ for func_name, func in functions_3d:
 # Testing gradient descent for 2D functions
 x_2d_start = [0, 0]
 iterations = grad.gradient_descent_fixed(f1, x_2d_start)
-print(f"Fixed gradient descent f1 starting from [0, 0]: {x_2d_start}, iterations: {iterations}, min value: {f1(x_2d_start)}")
+print(
+    f"Fixed gradient descent f1 starting from [0, 0]: {x_2d_start}, iterations: {iterations}, min value: {f1(x_2d_start)}")
 params_2d_spi = Parameters(delta=.1)
 iterations = grad.gradient_descent_spi(f1, x_2d_start, params_2d_spi)
-print(f"SPI gradient descent f1 starting from [0, 0]: {x_2d_start}, iterations: {iterations}, min value: {f1(x_2d_start)}")
+print(
+    f"SPI gradient descent f1 starting from [0, 0]: {x_2d_start}, iterations: {iterations}, min value: {f1(x_2d_start)}")
 print()
 
 x_2d_start = [0, 0]
@@ -50,7 +56,9 @@ print()
 # Testing gradient descent for 3D functions
 x_3d_start = [0, 0, 0]
 iterations = grad.gradient_descent_fixed(f_r_3, x_3d_start)
-print(f"Fixed gradient descent 3D Rosenbrock function starting from [0, 0, 0]: {x_3d_start}, iterations: {iterations}, min value: {f_r_3(x_3d_start)}")
+print(
+    f"Fixed gradient descent 3D Rosenbrock function starting from [0, 0, 0]: {x_3d_start}, iterations: {iterations}, min value: {f_r_3(x_3d_start)}")
 params_3d_spi = Parameters(delta=.01, max_iter=int(1e5))
 iterations = grad.gradient_descent_spi(f_r_3, x_3d_start, params_3d_spi)
-print(f"SPI gradient descent 3D Rosenbrock function starting from [0, 0, 0]: {x_3d_start}, iterations: {iterations}, min value: {f_r_3(x_3d_start)}")
+print(
+    f"SPI gradient descent 3D Rosenbrock function starting from [0, 0, 0]: {x_3d_start}, iterations: {iterations}, min value: {f_r_3(x_3d_start)}")
