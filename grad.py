@@ -47,7 +47,7 @@ def gradient_descent_fixed(
             break
         for i in range(len(x)):
             x[i] -= alpha * grad[i]
-    return iteration
+    return max_iter
 
 
 def spi(
@@ -57,7 +57,8 @@ def spi(
         x_min: List[float],
         tol: float,
         tol_den: float,
-        max_iter: int
+        max_iter: int,
+        replace_worst: bool = True
 ) -> int:
     """Perform SPI (Successive Parabolic Interpolation) to find the minimum of a function f."""
     t = r + delta
@@ -82,14 +83,19 @@ def spi(
         else:
             x_val = ((r + s) / 2) - numerator / denominator
 
-        r = s
-        s = t
+        f_x_val = f(x_val)
 
-        t = x_val
-
-        f_r = f_s
-        f_s = f_t
-        f_t = f(x_val)
+        if replace_worst:
+            # Replace the worst of the three points
+            if f_r >= f_s and f_r >= f_t:
+                r, f_r = x_val, f_x_val
+            elif f_s >= f_r and f_s >= f_t:
+                s, f_s = x_val, f_x_val
+            else:
+                t, f_t = x_val, f_x_val
+        else:
+            # Replace the oldest of the three points
+            r, f_r, s, f_s, t, f_t = s, f_s, t, f_t, x_val, f_x_val
 
     return 0
 
@@ -123,7 +129,8 @@ def gradient_descent_spi(
             return g(alpha, f, x, v)
 
         # Call SPI to find the optimal alpha
-        spi(params.r, params.delta, g_alpha, x_min, params.mips_tol, params.mips_tol_den, params.max_iter)
+        spi(params.r, params.delta, g_alpha, x_min, params.mips_tol, params.mips_tol_den, params.max_iter,
+            params.replace_worst)
         alfa = x_min[0]
         for i in range(len(x)):
             x[i] = x[i] - v[i] * alfa
