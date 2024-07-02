@@ -41,8 +41,37 @@ def read_csv(filename):
     return np.array(points), np.array(distances), np.array(iterations), np.array(function_evals)
 
 
+f1_min = [1.13263815658242, -0.46597244636103796]
+f2_min = [1, 1]
+delta = 0.1
+
+x_range = np.linspace(f2_min[0] - delta, f2_min[0] + delta, 400)
+y_range = np.linspace(f2_min[1] - delta, f2_min[1] + delta, 400)
+
+X, Y = np.meshgrid(x_range, y_range)
+Z = f_r_2([X, Y])
+
+# Plotting the function
+fig = plt.figure(figsize=(10, 8))
+ax = fig.add_subplot(111, projection='3d')
+
+# Create the surface plot
+surf = ax.plot_surface(X, Y, Z, cmap='viridis', edgecolor='none')
+fig.colorbar(surf, ax=ax, shrink=0.5, aspect=5)
+
+# Marking the minimum point
+ax.scatter(f2_min[0], f2_min[1], f1(f1_min), color='red', marker='x', s=100)
+
+ax.set_title('3D surface plot of the function f2')
+ax.set_xlabel('x')
+ax.set_ylabel('y')
+ax.set_zlabel('f1(x)')
+
+plt.show()
+
+
 # Read data from CSV
-points, distance, its, function_evals = read_csv('f1.csv')
+points, distance, its, function_evals = read_csv('f2_replace_oldest_1e-5_tol_1e-2_delta_1e-1_range_1000.csv')
 
 # Plot 1: x-coordinate vs. y-coordinate with number of iterations as color bar
 x_coords = points[:, 0]
@@ -96,5 +125,20 @@ y_fit = results.predict(x_trans)
 # Plot the fitted logarithmic function
 plt.plot(function_evals, y_fit, color='red', linewidth=2, label='Logarithmic Fit')
 plt.legend()
+plt.grid(True, linestyle='--', alpha=0.7)
+plt.show()
+
+# Calculate the minimum of (x - minimum_x) and (y - minimum_y)
+min_distances = np.minimum(np.abs(points[:, 0] - f1_min[0]), np.abs(points[:, 1] - f1_min[1]))
+
+# Calculate the minimum of (x - minimum_x) and (y - minimum_y)
+min_distances = np.minimum(np.abs(points[:, 0] - f1_min[0]), np.abs(points[:, 1] - f1_min[1]))
+
+# Plot: Distance to Minimum vs. Minimum of (x - minimum_x, y - minimum_y)
+plt.figure(figsize=(10, 6))
+plt.scatter(min_distances, its, alpha=0.75, edgecolor='k', s=100)
+plt.xlabel('Minimum of |x - minimum_x| and |y - minimum_y|')
+plt.ylabel('Number of iterations')
+plt.title('Minimum of |x - minimum_x| and |y - minimum_y| x Number of iterations')
 plt.grid(True, linestyle='--', alpha=0.7)
 plt.show()

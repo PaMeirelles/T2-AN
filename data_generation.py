@@ -32,8 +32,9 @@ def generate(n_points, min_value, f, tol, delta, file_name, rng, replace_worst):
     function_evals = []
 
     for point in tqdm(points, desc="Computing iterations"):
-        iterations = grad.gradient_descent_spi(f, list(point.copy()),
-                                               Parameters(replace_worst=replace_worst, tol=tol, delta=delta, max_iter=int(1e6)))
+        # iterations = grad.gradient_descent_fixed(f, list(point.copy()), int(1e7), tol, delta)
+        iterations = grad.gradient_descent_spi(f, list(point.copy()), Parameters(replace_worst=replace_worst,
+        tol=tol, delta=delta, max_iter=int(1e6)))
         its.append(iterations)
         function_evals.append(f(point) - f(min_value))
 
@@ -53,5 +54,6 @@ def generate(n_points, min_value, f, tol, delta, file_name, rng, replace_worst):
 
 
 f1_min = [1.13263815658242, -0.46597244636103796]
-generate(1000, f1_min, f1, 5*1e-6, .1, "f1_replace_oldest_51e-6_tol_1e-1_delta_1e-2_range.csv", 1e-2, False)
+f2_min = [1, 1]
+generate(1000, f1_min, f1, 1e-5, 1e-1, "f1_replace_oldest_1e-5_tol_1e-1_delta_1e-2_range_1000.csv", 1e-2, False)
 # generate(1000, [1, 1], f_r_2, 1e-5, .01, "f2_1e-5tol.csv", 1e-4, True)

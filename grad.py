@@ -1,5 +1,7 @@
 from typing import List, Callable
 
+import numpy as np
+
 from parameters import Parameters
 
 
@@ -15,11 +17,11 @@ def gradient(f: Callable[[List[float]], float], x: List[float], h=1e-6) -> List[
 
 
 def gradient_descent_fixed(
-        f: Callable[[List[float]], float],
-        x: List[float],
-        max_iter: int = 1000,
-        tol: float = 1e-6,
-        alpha: float = 1e-5
+    f: Callable[[List[float]], float],
+    x: List[float],
+    max_iter: int = 1000,
+    tol: float = 1e-6,
+    alpha: float = 1e-5
 ) -> int:
     """
     Performs gradient descent optimization to minimize `f` starting from `x`.
@@ -43,10 +45,9 @@ def gradient_descent_fixed(
     """
     for iteration in range(max_iter):
         grad = gradient(f, x)
-        if all(abs(gr) < tol for gr in grad):
-            break
-        for i in range(len(x)):
-            x[i] -= alpha * grad[i]
+        if np.linalg.norm(grad) < tol:
+            return iteration
+        x = [x_i - alpha * grad_i for x_i, grad_i in zip(x, grad)]
     return max_iter
 
 
@@ -69,7 +70,11 @@ def spi(
     f_t = f(t)
 
     for i in range(max_iter):
-        val = f_s - f_t
+
+        if replace_worst:
+            val = min(abs(f_s - f_t), abs(f_s - f_r), abs(f_r - f_t))
+        else:
+            val = f_s - f_t
 
         if i > 2 and abs(val) <= tol:
             x_min[0] = (s + t) / 2
