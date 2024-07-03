@@ -1,6 +1,7 @@
 import numpy as np
 import csv
 
+
 # Function to read data from CSV and compute percentiles
 def read_csv_and_compute_percentiles(filename, percentiles_range):
     iterations = []
@@ -15,12 +16,13 @@ def read_csv_and_compute_percentiles(filename, percentiles_range):
 
     return percentiles
 
+
 # Example filenames (replace with your actual filenames)
-filename1 = 'f1_replace_oldest_1e-5_tol_1e-5_alpha_1e-2_range_1000.csv'
-filename2 = 'f1_replace_oldest_1e-5_tol_1e-1_delta_1e-2_range_1000.csv'
+filename1 = 'f3_n1000_tol1e-05_delta0.01_rng0.1_rwTrue_methodspi.csv'
+filename2 = 'f2_n1000_tol1e-05_delta0.01_rng0.1_rwTrue_methodspi.csv'
 
 # Specify the range of percentiles to compute
-percentiles_range = range(0, 101, 10)  # Computes percentiles 10, 20, 30, ..., 100
+percentiles_range = range(0, 101, 25)  # Computes percentiles 10, 20, 30, ..., 100
 
 # Read and compute specified percentiles for dataset 1
 percentiles_data1 = read_csv_and_compute_percentiles(filename1, percentiles_range)

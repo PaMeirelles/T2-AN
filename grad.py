@@ -5,7 +5,7 @@ import numpy as np
 from parameters import Parameters
 
 
-def gradient(f: Callable[[List[float]], float], x: List[float], h=1e-6) -> List[float]:
+def gradient(f: Callable[[List[float]], float], x: List[float], h=1e-8) -> List[float]:
     """Compute the gradient of a function f at point x using finite differences."""
     grad = [0.0] * len(x)
     fx = f(x)
@@ -65,16 +65,14 @@ def spi(
     t = r + delta
     s = r - delta
 
+    r, s, t = sorted([r, s, t], key=lambda x: -f(x))
+
     f_r = f(r)
     f_s = f(s)
     f_t = f(t)
-
     for i in range(max_iter):
 
-        if replace_worst:
-            val = min(abs(f_s - f_t), abs(f_s - f_r), abs(f_r - f_t))
-        else:
-            val = f_s - f_t
+        val = f_s - f_t
 
         if i > 2 and abs(val) <= tol:
             x_min[0] = (s + t) / 2
@@ -92,12 +90,12 @@ def spi(
 
         if replace_worst:
             # Replace the worst of the three points
-            if f_r >= f_s and f_r >= f_t:
-                r, f_r = x_val, f_x_val
-            elif f_s >= f_r and f_s >= f_t:
-                s, f_s = x_val, f_x_val
+            if f_x_val < f_t:
+                r, f_r, s, f_s, t, f_t = s, f_s, t, f_t, x_val, f_x_val
+            elif f_x_val < f_s:
+                r, f_r, s, f_s = s, f_s, x_val, f_x_val
             else:
-                t, f_t = x_val, f_x_val
+                r, f_r = x_val, f_x_val
         else:
             # Replace the oldest of the three points
             r, f_r, s, f_s, t, f_t = s, f_s, t, f_t, x_val, f_x_val
@@ -139,7 +137,8 @@ def gradient_descent_spi(
         alfa = x_min[0]
         for i in range(len(x)):
             x[i] = x[i] - v[i] * alfa
-        if (sum([i ** 2 for i in v])) ** (1 / 2) < params.tol:
+        error = (sum([i ** 2 for i in v])) ** (1 / 2)
+        if error < params.tol:
             return k
 
     return params.max_iter

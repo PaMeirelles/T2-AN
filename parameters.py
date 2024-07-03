@@ -19,6 +19,6 @@ class Parameters:
     max_iter: int = 1000
     tol: float = 1e-6
     delta: float = 1.0
-    mips_tol: float = 1e-6
-    mips_tol_den: float = 1e-6
+    mips_tol: float = 1e-13
+    mips_tol_den: float = 1e-10
     replace_worst: bool = False

@@ -3,7 +3,6 @@ import matplotlib.pyplot as plt
 from math import sqrt
 
 from sklearn.linear_model import LinearRegression
-from sklearn.preprocessing import FunctionTransformer
 
 import grad
 from parameters import Parameters
@@ -69,9 +68,8 @@ ax.set_zlabel('f1(x)')
 
 plt.show()
 
-
 # Read data from CSV
-points, distance, its, function_evals = read_csv('f2_replace_oldest_1e-5_tol_1e-2_delta_1e-1_range_1000.csv')
+points, distance, its, function_evals = read_csv('f2_n1000_tol1e-05_delta0.01_rng0.1_rwTrue_methodspi.csv')
 
 # Plot 1: x-coordinate vs. y-coordinate with number of iterations as color bar
 x_coords = points[:, 0]
@@ -86,59 +84,25 @@ plt.title('X-coordinate vs. Y-coordinate (Color represents Number of Iterations)
 plt.grid(True, linestyle='--', alpha=0.7)
 plt.show()
 
-# Plot 2: Distance vs. Number of Iterations with a logarithmic fit
-plt.figure(figsize=(10, 6))
-plt.scatter(distance, its, alpha=0.75, edgecolor='k', s=100)
-plt.xlabel('Distance to Minimum')
-plt.ylabel('Number of Iterations')
-plt.title('Distance to Minimum vs. Number of Iterations')
 
-# Transform distance for fitting
-transformer = FunctionTransformer(np.log, validate=True)
-x_trans = transformer.fit_transform(np.array(distance).reshape(-1, 1))
+# Function to compute and print the Pearson correlation coefficient
+def compute_correlation(x, y):
+    correlation_matrix = np.corrcoef(x, y)
+    correlation = correlation_matrix[0, 1]
+    return correlation
 
-# Fit the Linear Regression
-regressor = LinearRegression()
-results = regressor.fit(x_trans, its)
-y_fit = results.predict(x_trans)
 
-# Plot the fitted logarithmic function
-plt.plot(distance, y_fit, color='red', linewidth=2, label='Logarithmic Fit')
-plt.legend()
-plt.grid(True, linestyle='--', alpha=0.7)
-plt.show()
+# Print correlation for Distance vs. Number of Iterations
+corr_distance = compute_correlation(distance, its)
+print(f'Correlation for Distance to Minimum vs. Number of Iterations: {corr_distance}')
 
-# Plot 3: Function Evaluation Difference vs. Number of Iterations with a logarithmic fit
-plt.figure(figsize=(10, 6))
-plt.scatter(function_evals, its, alpha=0.75, edgecolor='k', s=100)
-plt.xlabel('Function Evaluation Difference')
-plt.ylabel('Number of Iterations')
-plt.title('Function Evaluation Difference vs. Number of Iterations')
-
-# Transform function_evals for fitting
-x_trans = transformer.fit_transform(np.array(function_evals).reshape(-1, 1))
-
-# Fit the Linear Regression
-results = regressor.fit(x_trans, its)
-y_fit = results.predict(x_trans)
-
-# Plot the fitted logarithmic function
-plt.plot(function_evals, y_fit, color='red', linewidth=2, label='Logarithmic Fit')
-plt.legend()
-plt.grid(True, linestyle='--', alpha=0.7)
-plt.show()
+# Print correlation for Function Evaluation Difference vs. Number of Iterations
+corr_function_evals = compute_correlation(function_evals, its)
+print(f'Correlation for Function Evaluation Difference vs. Number of Iterations: {corr_function_evals}')
 
 # Calculate the minimum of (x - minimum_x) and (y - minimum_y)
 min_distances = np.minimum(np.abs(points[:, 0] - f1_min[0]), np.abs(points[:, 1] - f1_min[1]))
 
-# Calculate the minimum of (x - minimum_x) and (y - minimum_y)
-min_distances = np.minimum(np.abs(points[:, 0] - f1_min[0]), np.abs(points[:, 1] - f1_min[1]))
-
-# Plot: Distance to Minimum vs. Minimum of (x - minimum_x, y - minimum_y)
-plt.figure(figsize=(10, 6))
-plt.scatter(min_distances, its, alpha=0.75, edgecolor='k', s=100)
-plt.xlabel('Minimum of |x - minimum_x| and |y - minimum_y|')
-plt.ylabel('Number of iterations')
-plt.title('Minimum of |x - minimum_x| and |y - minimum_y| x Number of iterations')
-plt.grid(True, linestyle='--', alpha=0.7)
-plt.show()
+# Print correlation for Minimum of |x - minimum_x| and |y - minimum_y| vs. Number of iterations
+corr_min_distances = compute_correlation(min_distances, its)
+print(f'Correlation for Minimum of |x - minimum_x| and |y - minimum_y| vs. Number of iterations: {corr_min_distances}')
